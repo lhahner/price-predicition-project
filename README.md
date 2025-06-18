@@ -12,9 +12,9 @@ The following is how we split the tasks, but in every step we will help eachothe
 1. Preprocessing (Thies & the others will help)
 2. Feature Engineering (Fabian & the others will help)
 3. Build a Predictive Model:
-  1. Linear or polynomial regression (Thies)
-  2. Random forests or gradient-boosted trees (Fabian)
-  3. Transformer (Lennart)
-  5. CNN (Defne)
+- Linear or polynomial regression (Thies)
+- Random forests or gradient-boosted trees (Fabian)
+- Transformer (Lennart)
+- CNN (Defne)
 4. Evaluation (Defne & the others will help)
   1. Analysis & Reporting
