@@ -85,8 +85,9 @@ def export_processed_data(arg):
     arg.to_csv('./processed-data/data.csv', index=False)
 
 nDf = join_dfs(clean_listings_df(), clean_reviews_df(), clean_calendar_df())
+print(nDf.head())
 
 # Improve: return?, or perhaps save the cleaned dataframes to csv files
 # like this:
 # listings_df.to_csv('data/cleaned_listings.csv', index=False)
-export_processed_data(nDf)
+# export_processed_data(nDf) # inperformant
