@@ -17,4 +17,4 @@ The following is how we split the tasks, but in every step we will help eachothe
 - Transformer (Lennart)
 - CNN (Defne)
 4. Evaluation (Defne & the others will help)
-  1. Analysis & Reporting
+  1. Analysis & Reporting (do i do it- Defne?)
