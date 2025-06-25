@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from pandas.core.interchange.dataframe_protocol import DataFrame
+from sklearn.preprocessing import StandardScaler
 
 # ---------------------------------------------------------------
 # TODO: list of todos:
@@ -28,14 +29,17 @@ def clean_listings_df():
         'host_is_superhost', 'host_neighbourhood', 'host_verifications',
         'host_thumbnail_url', 'license', 'calendar_updated',
         'calendar_last_scraped', 'last_review', 'first_review', 'neighbourhood_group_cleansed',
-        'last_scraped', 'source'
+        'last_scraped', 'source', 'neighborhood'
     ], inplace=True)
     # remove rows with missing values in important columns
-    listings_df.dropna(subset=['price', 'latitude', 'longitude', 'accommodates', 'bedrooms', 'beds'], inplace=True)
+    listings_df.dropna(subset=['price', 'latitude', 'longitude', 'accommodates', 'bedrooms', 'beds', 'has_availability'], inplace=True)
+    listings_df['description'].fillna('no description', inplace=True)
 
     # turn price column into float, removing dollar sign
     listings_df['price'] = listings_df['price'].str.replace('[$,]', '', regex=True).astype(float)
     listings_df.rename(columns={'id': 'listing_id'}, inplace=True)
+    
+    listings_df.info()
     return listings_df
 
 # ---------------------------------------------------------------
@@ -60,32 +64,48 @@ def clean_calendar_df():
 
     # turn price column into float, removing dollar sign
     calendar_df['price'] = calendar_df['price'].str.replace('[$,]', '', regex=True).astype(float)
+    
     return calendar_df
+
+    
 
 # TODO: idea- we could aggregate the future prices for each listingID to reduce the size of the dataframe since 
 # the prices tend to not fluctuate too much
 
+
+# ---------------------------------------------------------------
+# NORMALIZE DATAFRAMES (Z-SCORE NORMALIZATION)
+# ---------------------------------------------------------------
+
+scaler = StandardScaler()
+
+
+
+
 # ---------------------------------------------------------------
 # JOINS OF DATAFRAMES
+# code commented out because slow
 # Improvement suggestions: Takes a lot of time and needs to be faster configured.
 # ---------------------------------------------------------------
-def join_dfs(*dfs, join_key='listing_id', how='left'):
-    if not dfs:
-        raise ValueError("At least one DataFrame must be provided.")
 
-    # Ensure join_key is set as index for optimization (optional)
-    merged_df = dfs[0]
-    for df in dfs[1:]:
-        merged_df = pd.merge(merged_df, df, on=join_key, how=how, copy=False, sort=False)
-    return merged_df
+# def join_dfs(*dfs, join_key='listing_id', how='left'):
+#     if not dfs:
+#         raise ValueError("At least one DataFrame must be provided.")
 
-def export_processed_data(arg):
-    if len(arg) == 0:
-        raise ValueError("At least one DataFrame must be provided.")
-    arg.to_csv('./processed-data/data.csv', index=False)
+#     # Ensure join_key is set as index for optimization (optional)
+#     merged_df = dfs[0]
+#     for df in dfs[1:]:
+#         merged_df = pd.merge(merged_df, df, on=join_key, how=how, copy=False, sort=False)
+#     return merged_df
 
-nDf = join_dfs(clean_listings_df(), clean_reviews_df(), clean_calendar_df())
-print(nDf.head())
+# def export_processed_data(arg):
+#     if len(arg) == 0:
+#         raise ValueError("At least one DataFrame must be provided.")
+#     arg.to_csv('./processed-data/data.csv', index=False)
+
+# nDf = join_dfs(clean_listings_df(), clean_reviews_df(), clean_calendar_df())
+# print(nDf.head())
+clean_listings_df()
 
 # Improve: return?, or perhaps save the cleaned dataframes to csv files
 # like this:
