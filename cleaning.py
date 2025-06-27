@@ -9,16 +9,24 @@ from sklearn.preprocessing import StandardScaler
 # - export cleaned dataframes somehow (either to csv or return them)
 # - calendar dataframe: maybe aggregate future prices for each listingID to reduce size
 
+# init dataframes
 reviews_df = pd.read_csv('data/reviews.csv')
 listings_df = pd.read_csv('data/listings.csv')
 
-# debugging shape printing
-# print ("Listings df shape:", listings_df.shape)
-# print ("Reviews df shape:", reviews_df.shape)
+# method to fill NaN values with the mean of the column
+def fill_na_with_mean(df, column):
+    if column in df.columns:
+        mean_value = df[column].mean()
+        df[column].fillna(mean_value, inplace=True)
+    else:
+        raise ValueError(f"Column {column} does not exist in the DataFrame.")
 
 # ---------------------------------------------------------------
 # CLEAN THE LISTINGS DATAFRAME
+# TODO: boolean columns from t/f to 1/0?
+# TODO: make types correct (dates as datetime etc)
 # ---------------------------------------------------------------
+
 def clean_listings_df():
     # remove columns with too many missing values or unnecessary information
     listings_df.drop(columns=[
@@ -27,17 +35,27 @@ def clean_listings_df():
         'host_is_superhost', 'host_neighbourhood', 'host_verifications',
         'host_thumbnail_url', 'license', 'calendar_updated',
         'calendar_last_scraped', 'last_review', 'first_review', 'neighbourhood_group_cleansed',
-        'last_scraped', 'source'
+        'last_scraped', 'source', 'neighbourhood', 'calculated_host_listings_count', 'calculated_host_listings_count_entire_homes',
+        'calculated_host_listings_count_private_rooms', 'calculated_host_listings_count_shared_rooms',
     ], inplace=True)
     # remove rows with missing values in important columns
     listings_df.dropna(subset=['price', 'latitude', 'longitude', 'accommodates', 'bedrooms', 'beds', 'has_availability'], inplace=True)
     listings_df['description'].fillna('no description', inplace=True)
 
+    # fill NaN values in review score columns with the mean of the column
+    for col in ['review_scores_rating', 'review_scores_accuracy', 'review_scores_cleanliness',
+                'review_scores_checkin', 'review_scores_communication',
+                'review_scores_location', 'review_scores_value', 'reviews_per_month']:
+        # fill NaN values with the mean of the column
+        fill_na_with_mean(listings_df, col)
+
+
     # turn price column into float, removing dollar sign
     listings_df['price'] = listings_df['price'].str.replace('[$,]', '', regex=True).astype(float)
+    # change id column name to listing_id for consistency with reviews_df
     listings_df.rename(columns={'id': 'listing_id'}, inplace=True)
     
-    listings_df.info()
+    
     return listings_df
 
 # ---------------------------------------------------------------
@@ -52,12 +70,6 @@ def clean_reviews_df():
     reviews_df.dropna(subset=['comments'], inplace=True)
     return reviews_df
 
-
-
-    
-
-
-
 # ---------------------------------------------------------------
 # NORMALIZE DATAFRAMES (Z-SCORE NORMALIZATION)
 # ---------------------------------------------------------------
@@ -68,7 +80,6 @@ def clean_reviews_df():
 
 # ---------------------------------------------------------------
 # JOINS OF DATAFRAMES
-# code commented out because slow
 # Improvement suggestions: Takes a lot of time and needs to be faster configured.
 # ---------------------------------------------------------------
 
@@ -85,13 +96,11 @@ def join_dfs(*dfs, join_key='listing_id', how='left'):
 def export_processed_data(arg):
     if len(arg) == 0:
         raise ValueError("At least one DataFrame must be provided.")
-    arg.to_csv('./processed-data/data.csv', index=False)
+    arg.to_csv('./processed-data/clean-data.csv', index=False)
 
 nDf = join_dfs(clean_listings_df(), clean_reviews_df())
 print(nDf.head())
 print("finished dataframe shape ", nDf.shape)
 
-# Improve: return?, or perhaps save the cleaned dataframes to csv files
-# like this:
-# listings_df.to_csv('data/cleaned_listings.csv', index=False)
-# export_processed_data(nDf) # inperformant
+export_processed_data(nDf)
+# TODO: the finished csv file looks kinda weird. get rid of the <br> and such?
