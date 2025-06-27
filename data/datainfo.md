@@ -6,6 +6,3 @@ listings.csv
 
 reviews.csv	
     Summary Review data and Listing ID (to facilitate time based analytics and visualisations linked to a listing).
-
-calendar.csv	
-    Detailed Calendar Data
