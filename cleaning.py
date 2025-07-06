@@ -68,6 +68,7 @@ def clean_listings_df(keep_text_columns=True):
     # prepare all numeric columns for normalization
     numeric_cols = listings_df.select_dtypes(include=[np.number]).columns.tolist()
     numeric_cols.remove('listing_id')
+    numeric_cols.remove('price') # this is the target variable, we do not want to normalize it
     normalize_df(listings_df, numeric_cols)
 
     listings_df.info()
