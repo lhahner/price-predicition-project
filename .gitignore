@@ -1,3 +1,6 @@
+.idea/
+DS_Store
+
 # the files in the processed-data directory
 processed-data/
 
