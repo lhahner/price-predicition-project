@@ -63,3 +63,77 @@ for lr, dr, units in combinations:
 # Display results
 df_results = pd.DataFrame(results)
 print(df_results.sort_values(by="val_mae"))
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+
+def plot_price_distribution(prices):
+    """
+    Plots the distribution of listing prices.
+
+    Parameters:
+    - prices (array-like): List or array of prices
+
+    Returns:
+    - A histogram with KDE showing price distribution
+    """
+    plt.figure(figsize=(10, 6))
+    sns.histplot(prices, bins=30, kde=True, color='skyblue')
+    plt.title('Price Distribution of Listings')
+    plt.xlabel('Price ($)')
+    plt.ylabel('Frequency')
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+
+def show_sample_images(images, prices, num_samples=6):
+    """
+    Displays a grid of sample images along with their price.
+
+    Parameters:
+    - images (ndarray): Array of images in shape (n, height, width, 3)
+    - prices (array-like): Corresponding prices
+    - num_samples (int): Number of samples to show
+
+    Returns:
+    - A matplotlib figure of sample images with prices as titles
+    """
+    plt.figure(figsize=(15, 4))
+    for i in range(num_samples):
+        plt.subplot(1, num_samples, i + 1)
+        plt.imshow(images[i])
+        plt.title(f"${prices[i]:.0f}")
+        plt.axis('off')
+    plt.suptitle("Sample Airbnb Listings with Prices", fontsize=16)
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_actual_vs_predicted(y_true, y_pred):
+    """
+    Plots a scatterplot of actual vs predicted prices.
+
+    Parameters:
+    - y_true (array-like): Actual prices
+    - y_pred (array-like): Predicted prices
+
+    Returns:
+    - A scatter plot showing prediction performance
+    """
+    plt.figure(figsize=(8, 6))
+    plt.scatter(y_true, y_pred, alpha=0.6, c='orange', edgecolor='k')
+    plt.plot([min(y_true), max(y_true)], [min(y_true), max(y_true)], 'r--')  # Ideal line
+    plt.xlabel("Actual Price ($)")
+    plt.ylabel("Predicted Price ($)")
+    plt.title("Actual vs Predicted Prices")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+
+# plot_price_distribution(y_val)
+# show_sample_images(X_val, y_val)
+# plot_actual_vs_predicted(y_val, y_pred)   
+
