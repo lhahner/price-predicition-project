@@ -1,4 +1,4 @@
-
+  
 # Defne CNN: Predicting Airbnb Prices from Images
 
 import pandas as pd  
